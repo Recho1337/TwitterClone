@@ -1,0 +1,12 @@
+# Base backend
+Flask
+flask_sqlalchemy
+flask_migrate
+psycopg2-binary
+flask-cors
+flask-jwt-extended
+
+# Testing scripts
+pytest
+pytest-flask
+flask-testing
