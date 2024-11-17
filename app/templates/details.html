@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Update Your Details{% endblock %}
+
+{% block content %}
+    <!-- Details Form -->
+    <div class="details-page">
+        <h1>Update Your Details</h1>
+        <form method="POST" action="{{ url_for('main.update_details') }}">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" value="{{ current_user.username }}" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ current_user.email }}" required>
+
+            <label for="bio">Bio:</label>
+            <textarea id="bio" name="bio" placeholder="Tell us about yourself">{{ current_user.bio or '' }}</textarea>
+
+            <input type="submit" value="Update Details">
+        </form>
+    </div>
+{% endblock %}

@@ -1,19 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
 
-    <div class="navbar">
-        <a href="{{ url_for('main.home') }}">Home</a>
-        <a href="{{ url_for('main.login') }}">Login</a>
-        <a href="{{ url_for('main.register') }}">Register</a>
-    </div>
+{% block title %}Login{% endblock %}
 
+{% block content %}
     <div class="login-page">
         <div class="login-container">
             <h2>Login</h2>
@@ -31,10 +20,4 @@
             </form>
         </div>
     </div>
-
-    <footer>
-        <p>&copy; TwitterClone.</p>
-    </footer>
-
-</body>
-</html>
+{% endblock %}

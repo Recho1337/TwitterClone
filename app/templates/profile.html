@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ user.username }}'s Profile</h1>
+        
+        <p><strong>Bio:</strong> {{ user.bio or "This user has no bio." }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+
+        <!-- Follow / Unfollow Button -->
+        {% if current_user != user %}
+            {% if current_user.is_following(user) %}
+                <a href="{{ url_for('main.unfollow', user_id=user.id) }}" class="btn btn-danger">Unfollow</a>
+            {% else %}
+                <a href="{{ url_for('main.follow', user_id=user.id) }}" class="btn btn-primary">Follow</a>
+            {% endif %}
+        {% else %}
+            <!-- Bio Update Form if Current User is Viewing Their Own Profile -->
+            <h2>Update Your Details</h2>
+            <form method="POST" action="{{ url_for('main.update_details') }}">
+                <!-- Update Username -->
+                <label for="username">Username:</label>
+                <input type="text" name="username" value="{{ user.username }}" required>
+
+                <!-- Update Email -->
+                <label for="email">Email:</label>
+                <input type="email" name="email" value="{{ user.email }}" required>
+
+                <!-- Update Bio -->
+                <label for="bio">Bio:</label>
+                <textarea name="bio" placeholder="Update your bio...">{{ user.bio or '' }}</textarea>
+
+                <input type="submit" value="Update Details">
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}
