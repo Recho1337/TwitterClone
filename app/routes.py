@@ -4,8 +4,10 @@ from . import db
 from .models import User, followers, Post
 from .forms import PostForm
 from flask_login import login_user, login_required, logout_user
-
+from werkzeug.utils import secure_filename
 from flask import Blueprint
+import os
+from flask import current_app
 
 main = Blueprint('main', __name__)
 
@@ -110,12 +112,6 @@ def search_users():
 
     return render_template('dashboard.html', results=results)
 
-@main.route('/profile/<int:user_id>')
-@login_required
-def profile(user_id):
-    user = User.query.get_or_404(user_id)
-    return render_template('profile.html', user=user)
-
 @main.route('/follow/<int:user_id>')
 @login_required
 def follow(user_id):
@@ -171,3 +167,43 @@ def create_post():
         return redirect(url_for('main.dashboard'))  # Redirect to the dashboard after post creation
 
     return render_template('create_post.html', form=form)  # Render the form for post creation
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
+
+
+# Profile route: handles both GET and POST
+@main.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        # Handle profile picture upload
+        if 'profile_picture' in request.files:
+            file = request.files['profile_picture']
+            if file and allowed_file(file.filename):  # Check if the file is allowed
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+
+                # Ensure the upload folder exists
+                if not os.path.exists(current_app.config['UPLOAD_FOLDER']):
+                    os.makedirs(current_app.config['UPLOAD_FOLDER'])
+
+                file.save(filepath)  # Save the file
+
+                # Update the user's profile picture path in the database
+                current_user.profile_picture = filename
+
+        # Update other user details (username, email, bio)
+        if 'username' in request.form:
+            current_user.username = request.form['username']
+        if 'email' in request.form:
+            current_user.email = request.form['email']
+        if 'bio' in request.form:
+            current_user.bio = request.form['bio']
+        
+        db.session.commit()  # Commit the changes to the database
+        flash('Your profile has been updated!', 'success')
+        return redirect(url_for('main.profile'))  # Redirect to the profile page after submission
+
+    # GET request: render the profile page
+    return render_template('profile.html', user=current_user)

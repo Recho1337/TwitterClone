@@ -1,8 +1,16 @@
+<!-- profile.html -->
 {% extends "base.html" %}
 
 {% block content %}
     <div class="container">
         <h1>{{ user.username }}'s Profile</h1>
+        
+        <!-- Display profile picture -->
+        {% if user.profile_picture %}
+            <img src="{{ url_for('static', filename='uploads/' + user.profile_picture) }}" alt="Profile Picture" width="150">
+        {% else %}
+            <img src="{{ url_for('static', filename='default_profile_pic.jpg') }}" alt="Profile Picture" width="150">
+        {% endif %}
         
         <p><strong>Bio:</strong> {{ user.bio or "This user has no bio." }}</p>
         <p><strong>Email:</strong> {{ user.email }}</p>
@@ -15,9 +23,9 @@
                 <a href="{{ url_for('main.follow', user_id=user.id) }}" class="btn btn-primary">Follow</a>
             {% endif %}
         {% else %}
-            <!-- Bio Update Form if Current User is Viewing Their Own Profile -->
+            <!-- Update Details and Profile Picture -->
             <h2>Update Your Details</h2>
-            <form method="POST" action="{{ url_for('main.update_details') }}">
+            <form method="POST" enctype="multipart/form-data">
                 <!-- Update Username -->
                 <label for="username">Username:</label>
                 <input type="text" name="username" value="{{ user.username }}" required>
@@ -30,7 +38,11 @@
                 <label for="bio">Bio:</label>
                 <textarea name="bio" placeholder="Update your bio...">{{ user.bio or '' }}</textarea>
 
-                <input type="submit" value="Update Details">
+                <!-- Update Profile Picture -->
+                <label for="profile_picture">Profile Picture:</label>
+                <input type="file" name="profile_picture" accept="image/*">
+
+                <input type="submit" value="Update Profile">
             </form>
         {% endif %}
     </div>

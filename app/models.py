@@ -10,6 +10,8 @@ followers = db.Table(
     db.Column('followed_id', db.Integer, db.ForeignKey('users.id'))
 )
 
+# app/models.py
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
@@ -18,6 +20,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     _password_hash = db.Column(db.String(128))
     bio = db.Column(db.Text, nullable=True)
+    profile_picture = db.Column(db.String(120), nullable=True, default='default.jpg')  # Add this line
 
     # Relationships for followers
     followed = db.relationship(
